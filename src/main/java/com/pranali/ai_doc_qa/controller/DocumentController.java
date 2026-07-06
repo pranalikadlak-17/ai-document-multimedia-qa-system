@@ -12,8 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.pranali.ai_doc_qa.dto.UploadResponse;
 import com.pranali.ai_doc_qa.model.Document;
 import com.pranali.ai_doc_qa.service.DocumentService;
+import org.springframework.web.bind.annotation.RequestBody;
 
-
+import com.pranali.ai_doc_qa.dto.ChatRequest;
+import com.pranali.ai_doc_qa.dto.ChatResponse;
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {
@@ -38,5 +40,12 @@ public class DocumentController {
 
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/ask")
+    public ResponseEntity<ChatResponse> askQuestion(
+            @RequestBody ChatRequest request) {
 
+        ChatResponse response = documentService.askQuestion(request);
+
+        return ResponseEntity.ok(response);
+    }
 }
