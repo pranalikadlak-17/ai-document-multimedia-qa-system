@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pranali.ai_doc_qa.model.Document;
-import com.pranali.ai_doc_qa.repository.DocumentRepository;
 import com.pranali.ai_doc_qa.dto.ChatRequest;
 import com.pranali.ai_doc_qa.dto.ChatResponse;
+import com.pranali.ai_doc_qa.model.ChatHistory;
+import com.pranali.ai_doc_qa.model.Document;
+import com.pranali.ai_doc_qa.repository.ChatHistoryRepository;
+import com.pranali.ai_doc_qa.repository.DocumentRepository;
 
 @Service
 public class DocumentService {
@@ -17,16 +19,19 @@ public class DocumentService {
     private final FileStorageService fileStorageService;
     private final PdfExtractorService pdfExtractorService;
     private final GeminiService geminiService;
+    private final ChatHistoryRepository chatHistoryRepository;
 
     public DocumentService(DocumentRepository documentRepository,
                            FileStorageService fileStorageService,
                            PdfExtractorService pdfExtractorService,
-                           GeminiService geminiService) {
+                           GeminiService geminiService,
+                           ChatHistoryRepository chatHistoryRepository) {
 
         this.documentRepository = documentRepository;
         this.fileStorageService = fileStorageService;
         this.pdfExtractorService = pdfExtractorService;
         this.geminiService = geminiService;
+        this.chatHistoryRepository = chatHistoryRepository;
     }
 
     public Document uploadDocument(MultipartFile file) throws IOException {
@@ -69,6 +74,13 @@ public class DocumentService {
                         request.getQuestion());
 
         String answer = geminiService.askGemini(prompt);
+
+        ChatHistory chatHistory = new ChatHistory();
+        chatHistory.setQuestion(request.getQuestion());
+        chatHistory.setAnswer(answer);
+        chatHistory.setAskedAt(LocalDateTime.now());
+        chatHistory.setDocument(document);
+        chatHistoryRepository.save(chatHistory);
 
         return new ChatResponse(answer);
     }
