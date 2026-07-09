@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,5 +59,21 @@ public class DocumentController {
         List<ChatHistoryResponse> history = documentService.getChatHistory(documentId);
 
         return ResponseEntity.ok(history);
+    }
+    @GetMapping
+    public ResponseEntity<List<DocumentResponse>> getAllDocuments() {
+
+        List<DocumentResponse> documents = documentService.getAllDocuments();
+
+        return ResponseEntity.ok(documents);
+    }
+    
+    @DeleteMapping("/{documentId}")
+    public ResponseEntity<String> deleteDocument(
+            @PathVariable Long documentId) {
+
+        documentService.deleteDocument(documentId);
+
+        return ResponseEntity.ok("Document deleted successfully");
     }
 }

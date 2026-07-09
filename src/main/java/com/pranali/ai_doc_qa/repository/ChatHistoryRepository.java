@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.pranali.ai_doc_qa.model.ChatHistory;
 
 public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> {
+	
+	void deleteByDocumentId(Long documentId);
+	
 	List<ChatHistory> findByDocumentId(Long documentId);
-
 }

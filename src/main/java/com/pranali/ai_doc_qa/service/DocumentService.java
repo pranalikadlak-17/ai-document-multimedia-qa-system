@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pranali.ai_doc_qa.controller.DocumentResponse;
 import com.pranali.ai_doc_qa.dto.ChatHistoryResponse;
 import com.pranali.ai_doc_qa.dto.ChatRequest;
 import com.pranali.ai_doc_qa.dto.ChatResponse;
@@ -15,6 +16,8 @@ import com.pranali.ai_doc_qa.model.ChatHistory;
 import com.pranali.ai_doc_qa.model.Document;
 import com.pranali.ai_doc_qa.repository.ChatHistoryRepository;
 import com.pranali.ai_doc_qa.repository.DocumentRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class DocumentService {
@@ -100,6 +103,30 @@ public class DocumentService {
                 ))
                 .collect(Collectors.toList());
     }
+    
+    public List<DocumentResponse> getAllDocuments() {
 
+        return documentRepository.findAll()
+                .stream()
+                .map(document -> new DocumentResponse(
+                        document.getId(),
+                        document.getFileName(),
+                        document.getFileType(),
+                        document.getUploadedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+    @Transactional
+    public void deleteDocument(Long documentId) {
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+
+        // Delete chat history first
+        chatHistoryRepository.deleteByDocumentId(documentId);
+
+        // Delete document
+        documentRepository.delete(document);
+    }
     }
 
