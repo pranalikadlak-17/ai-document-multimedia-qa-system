@@ -2,6 +2,7 @@ package com.pranali.ai_doc_qa.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,7 @@ public class DocumentService {
                            FileStorageService fileStorageService,
                            PdfExtractorService pdfExtractorService,
                            GeminiService geminiService,
-                           ChatHistoryRepository chatHistoryRepository) {
+                          ChatHistoryRepository chatHistoryRepository) {
 
         this.documentRepository = documentRepository;
         this.fileStorageService = fileStorageService;
@@ -83,5 +84,11 @@ public class DocumentService {
         chatHistoryRepository.save(chatHistory);
 
         return new ChatResponse(answer);
+    }
+    
+    public List<ChatHistory> getChatHistory(Long documentId) {
+
+        return chatHistoryRepository.findByDocumentId(documentId);
+
     }
 }
