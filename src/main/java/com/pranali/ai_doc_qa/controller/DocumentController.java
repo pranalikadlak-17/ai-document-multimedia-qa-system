@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pranali.ai_doc_qa.dto.ChatHistoryResponse;
 import com.pranali.ai_doc_qa.dto.ChatRequest;
 import com.pranali.ai_doc_qa.dto.ChatResponse;
 import com.pranali.ai_doc_qa.dto.UploadResponse;
-import com.pranali.ai_doc_qa.model.ChatHistory;
 import com.pranali.ai_doc_qa.model.Document;
 import com.pranali.ai_doc_qa.service.DocumentService;
 @RestController
@@ -52,10 +52,10 @@ public class DocumentController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{documentId}/history")
-    public ResponseEntity<List<ChatHistory>> getChatHistory(
+    public ResponseEntity<List<ChatHistoryResponse>> getChatHistory(
             @PathVariable Long documentId) {
 
-        List<ChatHistory> history = documentService.getChatHistory(documentId);
+        List<ChatHistoryResponse> history = documentService.getChatHistory(documentId);
 
         return ResponseEntity.ok(history);
     }

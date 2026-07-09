@@ -3,10 +3,12 @@ package com.pranali.ai_doc_qa.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pranali.ai_doc_qa.dto.ChatHistoryResponse;
 import com.pranali.ai_doc_qa.dto.ChatRequest;
 import com.pranali.ai_doc_qa.dto.ChatResponse;
 import com.pranali.ai_doc_qa.model.ChatHistory;
@@ -86,9 +88,18 @@ public class DocumentService {
         return new ChatResponse(answer);
     }
     
-    public List<ChatHistory> getChatHistory(Long documentId) {
+    public List<ChatHistoryResponse> getChatHistory(Long documentId) {
 
-        return chatHistoryRepository.findByDocumentId(documentId);
+        return chatHistoryRepository.findByDocumentId(documentId)
+                .stream()
+                .map(chat -> new ChatHistoryResponse(
+                        chat.getId(),
+                        chat.getQuestion(),
+                        chat.getAnswer(),
+                        chat.getAskedAt()
+                ))
+                .collect(Collectors.toList());
+    }
 
     }
-}
+
